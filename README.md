@@ -65,7 +65,8 @@ const MyComponent = () => {
   </>
 }
 ```
-((Check out `useConfetti` for all of the options)[./lib/useConfetti.jsx])
+([Check out `useConfetti` for all of the options](./lib/useConfetti.jsx))
+
 
 
 You can also pass a `sourceRef` to `showConfetti()` to customise where the confetti appears from.
