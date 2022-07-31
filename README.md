@@ -1,5 +1,7 @@
 # 🎉 React Party
 ![npm version](https://img.shields.io/npm/v/@stevent-team/react-party)
+![minzip size](https://img.shields.io/bundlephobia/minzip/@stevent-team/react-party)
+
 
 Discord-inspired canvas confetti effect for React.
 
