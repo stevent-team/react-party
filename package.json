@@ -1,5 +1,6 @@
 {
-  "name": "react-party",
+  "name": "@stevent-team/react-party",
+  "version": "0.1.0",
   "type": "module",
   "files": [
     "dist"
