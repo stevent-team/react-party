@@ -21,7 +21,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: yarn install --immutable
-    - run: yarn build
+    - run: yarn build:sample
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
