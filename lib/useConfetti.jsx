@@ -1,5 +1,5 @@
 
-import {useEffect, useRef, useCallback} from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 
 import { CONFETTI_COLORS } from '/lib/config'
 import { useAnimationFrame, chooseWeighted } from '/lib/util'
@@ -22,7 +22,7 @@ const useConfetti = ({
   tiltAngleVariance = TAU,
   tiltAngleIncrementBase = 0.05,
   tiltAngleIncrementVariance = 0.07,
-  killZoneWidth=50,
+  killDistance = 100,
   colors = CONFETTI_COLORS,
   shapeDrawingFunctions = SHAPE_DRAWING_FUNCTIONS,
   shapeWeights = {
@@ -97,7 +97,7 @@ const useConfetti = ({
         canvasBBRef.current = canvasBB
         canvas.scale = scale
         canvas.width = Math.floor(width * scale)
-        canvas.height = Math.floor(height * scale) 
+        canvas.height = Math.floor(height * scale)
       }
     }, [])
 
@@ -106,7 +106,7 @@ const useConfetti = ({
       if (canvasRef.current) {
         const resizeObserver = new ResizeObserver(onCanvasResize)
         resizeObserver.observe(canvasRef.current)
-  
+
         return () => resizeObserver.disconnect()
       }
     }, [])
@@ -149,8 +149,8 @@ const useConfetti = ({
         // Remove off-screen particles
         particlesRef.current = particlesRef.current.filter(p => {
           if (currentTime < p.delayUntil) return true
-          if (p.x < -killZoneWidth || p.x > width + killZoneWidth) return false
-          if (p.y < -killZoneWidth || p.y > height + killZoneWidth) return false
+          if (p.x < -killDistance || p.x > width + killDistance) return false
+          if (p.y < -killDistance || p.y > height + killDistance) return false
           return true
         })
 
@@ -182,7 +182,7 @@ const useConfetti = ({
     )
   }
 
-  return {Confetti, showConfetti}
+  return { Confetti, showConfetti }
 }
 
 export default useConfetti
