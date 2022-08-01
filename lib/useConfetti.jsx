@@ -85,14 +85,16 @@ const useConfetti = ({
     const ctxRef = useRef()
 
     const onCanvasResize = useCallback(() => {
-      const canvas = canvasRef.current
-      const canvasBB = canvas.getBoundingClientRect()
-      const { width, height } = canvasBB
-      const scale = window.devicePixelRatio
-      canvasBBRef.current = canvasBB
-      canvas.scale = scale
-      canvas.width = Math.floor(width * scale)
-      canvas.height = Math.floor(height * scale) 
+      if (canvasRef.current) {
+        const canvas = canvasRef.current
+        const canvasBB = canvas.getBoundingClientRect()
+        const { width, height } = canvasBB
+        const scale = window.devicePixelRatio
+        canvasBBRef.current = canvasBB
+        canvas.scale = scale
+        canvas.width = Math.floor(width * scale)
+        canvas.height = Math.floor(height * scale) 
+      }
     }, [])
 
     // Observe for canvas size changes
