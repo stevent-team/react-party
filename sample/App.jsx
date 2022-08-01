@@ -11,6 +11,7 @@ const App = () => {
     gravity: { value: 1.3, min: -5, max: 5 },
     simulationSpeed: { value: 1.5, min: 0, max: 20 },
     tiltAmount: { value: 15, min: -15, max: 30 },
+    killDistance: { value: 100, min: 0, max: 3000 },
     xVelocity: folder({
       xVelocityBase: { value: 0, min: -10, max: 10 },
       xVelocityVariance: { value: 1.5, min: -10, max: 10 },
