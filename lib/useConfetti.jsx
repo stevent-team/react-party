@@ -33,51 +33,54 @@ const useConfetti = ({
 } = {}) => {
   const particlesRef = useRef([])
 
-  const showConfetti = useCallback(
-    ({count = 75, sourceRef} = {}) => {
-      const {left, top, width, height} = sourceRef?.current?.getBoundingClientRect()
-        ?? document.activeElement?.getBoundingClientRect()
-        ?? document.body.getBoundingClientRect()
+  const showConfetti = useCallback(({
+    count = 75,
+    duration = 0,
+    sourceRef
+  } = {}) => {
+    const {left, top, width, height} = sourceRef?.current?.getBoundingClientRect()
+      ?? document.activeElement?.getBoundingClientRect()
+      ?? document.body.getBoundingClientRect()
 
-      particlesRef.current = [
-        ...particlesRef.current,
-        ...Array.from({length: count}, () => {
-          const [x, y] = [left + Math.random() * width, top + Math.random() * height]
-          const [cx, cy] = [left + width / 2, top + height / 2]
-          const a = Math.atan2(y - cy, x - cx)
-          const vx = Math.cos(a) * Math.random() * xVelocityVariance + xVelocityBase
-          const vy = Math.sin(a) * Math.random() * yVelocityVariance + yVelocityBase
-          return {
-            x,
-            y,
-            vx,
-            vy,
-            diameter: Math.random() * diameterVariance + diameterBase,
-            tilt: Math.random() * tiltVariance + tiltBase,
-            tiltAngleIncrement: Math.random() * tiltAngleIncrementVariance + tiltAngleIncrementBase,
-            tiltAngle: Math.random() * tiltAngleVariance + tiltAngleBase,
-            color: colors[(Math.random() * colors.length) | 0],
-            shape: chooseWeighted(shapeWeights, Math.random()),
-          }
-        }),
-      ]
-    },
-    [
-      xVelocityBase,
-      xVelocityVariance,
-      yVelocityBase,
-      yVelocityVariance,
-      diameterBase,
-      diameterVariance,
-      tiltBase,
-      tiltVariance,
-      tiltAngleBase,
-      tiltAngleVariance,
-      tiltAngleIncrementBase,
-      tiltAngleIncrementVariance,
-      shapeWeights,
-    ],
-  )
+    particlesRef.current = [
+      ...particlesRef.current,
+      ...Array.from({length: count}, () => {
+        const [x, y] = [left + Math.random() * width, top + Math.random() * height]
+        const [cx, cy] = [left + width / 2, top + height / 2]
+        const a = Math.atan2(y - cy, x - cx)
+        const vx = Math.cos(a) * Math.random() * xVelocityVariance + xVelocityBase
+        const vy = Math.sin(a) * Math.random() * yVelocityVariance + yVelocityBase
+        return {
+          x,
+          y,
+          vx,
+          vy,
+          delayUntil: performance.now() + (Math.random() * duration),
+          diameter: Math.random() * diameterVariance + diameterBase,
+          tilt: Math.random() * tiltVariance + tiltBase,
+          tiltAngleIncrement: Math.random() * tiltAngleIncrementVariance + tiltAngleIncrementBase,
+          tiltAngle: Math.random() * tiltAngleVariance + tiltAngleBase,
+          color: colors[(Math.random() * colors.length) | 0],
+          shape: chooseWeighted(shapeWeights, Math.random()),
+        }
+      }),
+    ]
+  },
+  [
+    xVelocityBase,
+    xVelocityVariance,
+    yVelocityBase,
+    yVelocityVariance,
+    diameterBase,
+    diameterVariance,
+    tiltBase,
+    tiltVariance,
+    tiltAngleBase,
+    tiltAngleVariance,
+    tiltAngleIncrementBase,
+    tiltAngleIncrementVariance,
+    shapeWeights,
+  ])
 
   const Confetti = () => {
     const canvasRef = useRef()
@@ -116,7 +119,7 @@ const useConfetti = ({
     }, [])
 
     // Render onto canvas
-    useAnimationFrame(() => {
+    useAnimationFrame(currentTime => {
       if (canvasRef.current && ctxRef.current && canvasBBRef.current) {
         // Get context and bb
         const canvas = canvasRef.current
@@ -127,6 +130,9 @@ const useConfetti = ({
 
         // Update particles
         particlesRef.current = particlesRef.current.map((p) => {
+          // Still waiting for delay?
+          if (currentTime < p.delayUntil) return p
+
           const speed = simulationSpeed / 10
           const g = gravity / 100
           return {
@@ -140,7 +146,8 @@ const useConfetti = ({
         })
 
         // Remove off-screen particles
-        particlesRef.current = particlesRef.current.filter((p) => {
+        particlesRef.current = particlesRef.current.filter(p => {
+          if (currentTime < p.delayUntil) return true
           if (p.x < 0 || p.x > width) return false
           if (p.y > height) return false
           return true
@@ -148,11 +155,14 @@ const useConfetti = ({
 
         // Render particles
         ctx.clearRect(0, 0, width * scale, height * scale)
-        for (let p of particlesRef.current) {
+        particlesRef.current.forEach(p => {
+          // Still waiting for delay?
+          if (currentTime < p.delayUntil) return
+
           const [x, y] = [p.x - canvasLeft, p.y - canvasTop] //[p.x * width, p.y * height]
           const drawFn = shapeDrawingFunctions[p.shape]
           drawFn({ p, x, y, ctx, scale })
-        }
+        })
       }
     }, [])
 
