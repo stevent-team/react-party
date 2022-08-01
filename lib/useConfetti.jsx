@@ -22,6 +22,7 @@ const useConfetti = ({
   tiltAngleVariance = TAU,
   tiltAngleIncrementBase = 0.05,
   tiltAngleIncrementVariance = 0.07,
+  killZoneWidth=50,
   colors = CONFETTI_COLORS,
   shapeDrawingFunctions = SHAPE_DRAWING_FUNCTIONS,
   shapeWeights = {
@@ -148,8 +149,8 @@ const useConfetti = ({
         // Remove off-screen particles
         particlesRef.current = particlesRef.current.filter(p => {
           if (currentTime < p.delayUntil) return true
-          if (p.x < 0 || p.x > width) return false
-          if (p.y > height) return false
+          if (p.x < -killZoneWidth || p.x > width + killZoneWidth) return false
+          if (p.y < -killZoneWidth || p.y > height + killZoneWidth) return false
           return true
         })
 
