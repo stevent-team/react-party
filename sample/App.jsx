@@ -3,8 +3,8 @@ import { useConfetti } from '@stevent-team/react-party'
 
 const App = () => {
   // Setup controls
-  const showConfettiOptions = useControls('ShowConfettiOptions', {
-    duration: { value: 0, min: 0, max: 2000 },
+  const showConfettiOptions = useControls('Show Confetti Options', {
+    duration: { value: 0, min: 0, max: 5000 },
     count: { value: 75, min: 0, max: 3000 },
   })
   const confettiOptions = useControls('Confetti Options', {
@@ -40,7 +40,7 @@ const App = () => {
   const shapeWeights = useControls('Shape Weights', {
     'line': { value: 1, min: 0, max: 5, step: 1 },
     'circle': { value: 1, min: 0, max: 5, step: 1 },
-    'triangle': { value: 2, min: 0, max: 5, step: 1 },
+    'triangle': { value: 1, min: 0, max: 5, step: 1 },
     'pentagon': { value: 0, min: 0, max: 5, step: 1 },
     'hexagon': { value: 0, min: 0, max: 5, step: 1 },
     'heptagon': { value: 0, min: 0, max: 5, step: 1 },
@@ -49,14 +49,14 @@ const App = () => {
   }, { collapsed: true })
 
   // Call hook
-  const { showConfetti, Confetti } = useConfetti({
+  const { createConfetti, Confetti } = useConfetti({
     ...confettiOptions,
     shapeWeights
   })
 
   return <>
     <Confetti />
-    <button onClick={() => showConfetti(showConfettiOptions)}>Click me!</button>
+    <button onClick={() => createConfetti(showConfettiOptions)}>Click me!</button>
   </>
 }
 
