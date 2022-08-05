@@ -63,22 +63,8 @@ const App = () => {
   // Call hook
   const { createConfetti, canvasRef } = useConfetti({
     ...global,
+    ...confetti,
     shapeWeights,
-    initialVelocity: confetti.initialVelocity,
-    initialVelocitySpread: confetti.initialVelocitySpread,
-    diameterMin: confetti.diameter[0],
-    diameterMax: confetti.diameter[1],
-    twirlMin: confetti.twirl[0],
-    twirlMax: confetti.twirl[1],
-    initialAngleMin: confetti.initialAngle[0],
-    initialAngleMax: confetti.initialAngle[1],
-    angleIncrementMin: confetti.angleIncrement[0],
-    angleIncrementMax: confetti.angleIncrement[1],
-    initialFlipMin: confetti.initialFlip[0],
-    initialFlipMax: confetti.initialFlip[1],
-    flipIncrementMin: confetti.flipIncrement[0],
-    flipIncrementMax: confetti.flipIncrement[1],
-    rotationAndVelocityLink: confetti.rotationAndVelocityLink,
 
     shapeFunctions: {
       ...DEFAULT_SHAPE_FUNCTIONS,

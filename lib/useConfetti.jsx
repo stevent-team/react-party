@@ -16,21 +16,15 @@ const useConfetti = ({
   initialVelocity = [0, -3],
   initialVelocitySpread = [5, 7],
 
-  diameterMin = 10,
-  diameterMax = 30,
+  diameter = [10, 30],
 
-  twirlMin = 0,
-  twirlMax = .2,
+  twirl = [0, .2],
 
-  initialAngleMin = 0,
-  initialAngleMax = 360,
-  angleIncrementMin = -10,
-  angleIncrementMax = 10,
+  initialAngle = [0, 360],
+  angleIncrement = [-10, 10],
 
-  initialFlipMin = 0,
-  initialFlipMax = 360,
-  flipIncrementMin = -10,
-  flipIncrementMax = 10,
+  initialFlip = [0, 360],
+  flipIncrement = [-10, 10],
 
   rotationAndVelocityLink = .8,
 
@@ -63,7 +57,7 @@ const useConfetti = ({
     // Add confetti to the particle array
     particles.current = [
       ...particles.current,
-      ...Array.from({length: count}, () => {
+      ...Array.from({ length: count }, () => {
         const [vxInitial, vyInitial] = initialVelocity
         const [vxSpread, vySpread] = initialVelocitySpread
         const [x, y] = [left + Math.random() * width, top + Math.random() * height]
@@ -75,14 +69,14 @@ const useConfetti = ({
           x, y,
           vx, vy,
           delayUntil: randBetween(lastFrameTime.current, lastFrameTime.current + duration),
-          diameter: randBetween(diameterMin, diameterMax),
+          diameter: randBetween(diameter[0], diameter[1]),
           color: colors[(Math.random() * colors.length) | 0],
           shape: randWeighted(shapeWeights),
-          twirl: randBetween(twirlMin, twirlMax),
-          flip: randBetween(initialFlipMin, initialFlipMax),
-          flipIncrement: randBetween(flipIncrementMin, flipIncrementMax),
-          angle: randBetween(initialAngleMin, initialAngleMax),
-          angleIncrement: randBetween(angleIncrementMin, angleIncrementMax),
+          twirl: randBetween(twirl[0], twirl[1]),
+          flip: randBetween(initialFlip[0], initialFlip[1]),
+          flipIncrement: randBetween(flipIncrement[0], flipIncrement[1]),
+          angle: randBetween(initialAngle[0], initialAngle[1]),
+          angleIncrement: randBetween(angleIncrement[0], angleIncrement[1]),
         }
       }),
     ]
@@ -90,12 +84,9 @@ const useConfetti = ({
   [
     count, duration, colors, shapeWeights,
     initialVelocity, initialVelocitySpread,
-    diameterMin, diameterMax,
-    twirlMin, twirlMax,
-    initialFlipMin, initialFlipMax,
-    flipIncrementMin, flipIncrementMax,
-    initialAngleMin, initialAngleMax,
-    angleIncrementMin, angleIncrementMax,
+    diameter, twirl,
+    initialFlip, flipIncrement,
+    initialAngle, angleIncrement,
   ])
 
   const onCanvasResize = useCallback(() => {
