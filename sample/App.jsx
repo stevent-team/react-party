@@ -35,7 +35,7 @@ const App = () => {
       initialFlip: { value: [0, 360], min: 0, max: 360 },
       flipIncrement: { value: [-10, 10], min: -360, max: 360 },
     }, { collapsed: true }),
-    rotationAndVelocityLink: { value: .8, min: 0, max: 5 },
+    rotationVelocityCoefficient: { value: .8, min: 0, max: 5 },
   }, { collapsed: true })
 
   const shapeWeights = useControls('Shape weights', {

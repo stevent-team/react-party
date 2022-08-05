@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 
 import { DEFAULT_COLORS } from './config'
-import { useAnimationFrame, randWeighted, randBetween } from './util'
+import { useAnimationFrame, randWeighted, randMinMax } from './util'
 import { DEFAULT_SHAPE_FUNCTIONS } from './util/drawing'
 
 const useConfetti = ({
@@ -26,7 +26,7 @@ const useConfetti = ({
   initialFlip = [0, 360],
   flipIncrement = [-10, 10],
 
-  rotationAndVelocityLink = .8,
+  rotationVelocityCoefficient = .8,
 
   colors = DEFAULT_COLORS,
   shapeFunctions = DEFAULT_SHAPE_FUNCTIONS,
@@ -68,15 +68,15 @@ const useConfetti = ({
         return {
           x, y,
           vx, vy,
-          delayUntil: randBetween(lastFrameTime.current, lastFrameTime.current + duration),
-          diameter: randBetween(diameter[0], diameter[1]),
+          delayUntil: lastFrameTime.current + (Math.random() * duration),
+          diameter: randMinMax(diameter),
           color: colors[(Math.random() * colors.length) | 0],
           shape: randWeighted(shapeWeights),
-          twirl: randBetween(twirl[0], twirl[1]),
-          flip: randBetween(initialFlip[0], initialFlip[1]),
-          flipIncrement: randBetween(flipIncrement[0], flipIncrement[1]),
-          angle: randBetween(initialAngle[0], initialAngle[1]),
-          angleIncrement: randBetween(angleIncrement[0], angleIncrement[1]),
+          twirl: randMinMax(twirl),
+          flip: randMinMax(initialFlip),
+          flipIncrement: randMinMax(flipIncrement),
+          angle: randMinMax(initialAngle),
+          angleIncrement: randMinMax(angleIncrement),
         }
       }),
     ]
@@ -153,7 +153,7 @@ const useConfetti = ({
           vx: p.vx + (wind * speed),
           x: p.x + (p.vx * speed),
           y: p.y + (p.vy * speed),
-          flip: p.flip + (p.flipIncrement * (rotationAndVelocityLink ? Math.min(Math.max(p.vy, p.vx), 2) * rotationAndVelocityLink : 1) * speed),
+          flip: p.flip + (p.flipIncrement * (rotationVelocityCoefficient ? Math.min(Math.max(p.vy, p.vx), 2) * rotationVelocityCoefficient : 1) * speed),
           angle: p.angle + (p.angleIncrement * speed),
         }]
       }, [])
