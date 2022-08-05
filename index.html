@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>React Party</title>
-  <script type="module" src="./sample/index.jsx"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      color-scheme: light dark;
-    }
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Party Demo</title>
+    <script type="module" src="./sample/index.jsx"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        color-scheme: light dark;
+      }
 
-    #root {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
+      #root {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
 
-    button {
-      background: palevioletred;
-      padding: 1em;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      z-index: 1;
-    }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-</body>
+      #root button {
+        background: mediumpurple;
+        border-radius: .4em;
+        font: inherit;
+        font-family: sans-serif;
+        font-weight: bold;
+        text-shadow: 0 -.1em rebeccapurple;
+        color: white;
+        padding: .7em 1.2em;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 .2em rebeccapurple;
+        transition: box-shadow .15s, transform .15s;
+      }
+      #root button:active {
+        box-shadow: 0 0 rebeccapurple;
+        transform: translateY(.2em);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

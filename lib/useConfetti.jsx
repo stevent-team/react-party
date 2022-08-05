@@ -1,51 +1,59 @@
 import { useEffect, useRef, useCallback } from 'react'
 
-import { CONFETTI_COLORS } from '/lib/config'
-import { useAnimationFrame, chooseWeighted } from '/lib/util'
-import { TAU } from './config'
-import { SHAPE_DRAWING_FUNCTIONS } from './drawing'
-
-const canvasStyle = {
-  display: 'block',
-  position: 'absolute',
-  pointerEvents: 'none',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-}
+import { DEFAULT_COLORS } from './config'
+import { useAnimationFrame, randWeighted, randBetween } from './util'
+import { DEFAULT_SHAPE_FUNCTIONS } from './util/drawing'
 
 const useConfetti = ({
-  gravity = 1.3,
-  simulationSpeed = 1.5,
-  tiltAmount = 15,
-  xVelocityBase = 0,
-  xVelocityVariance = 1.5,
-  yVelocityBase = -1,
-  yVelocityVariance = 3,
-  diameterBase = 5,
-  diameterVariance = 10,
-  tiltBase = -10,
-  tiltVariance = 10,
-  tiltAngleBase = 0,
-  tiltAngleVariance = TAU,
-  tiltAngleIncrementBase = 0.05,
-  tiltAngleIncrementVariance = 0.07,
+  gravity = 9.8,
+  wind = 0,
+  speed = 1,
   killDistance = 100,
-  colors = CONFETTI_COLORS,
-  shapeDrawingFunctions = SHAPE_DRAWING_FUNCTIONS,
+
+  count = 75,
+  duration = 0,
+
+  initialVelocity = [0, -3],
+  initialVelocitySpread = [5, 7],
+
+  diameterMin = 10,
+  diameterMax = 30,
+
+  twirlMin = 0,
+  twirlMax = .2,
+
+  initialAngleMin = 0,
+  initialAngleMax = 360,
+  angleIncrementMin = -10,
+  angleIncrementMax = 10,
+
+  initialFlipMin = 0,
+  initialFlipMax = 360,
+  flipIncrementMin = -10,
+  flipIncrementMax = 10,
+
+  rotationAndVelocityLink = .8,
+
+  colors = DEFAULT_COLORS,
+  shapeFunctions = DEFAULT_SHAPE_FUNCTIONS,
   shapeWeights = {
     triangle: 1,
     circle: 1,
     star: 1,
-    line: 1,
+    square: 1,
   },
 } = {}) => {
+  // Setup references
   const particles = useRef([])
   const lastFrameTime = useRef(0)
+  const canvasRef = useRef()
+  const canvasBBoxRef = useRef()
+  const ctxRef = useRef()
+  const transformMatrix = useRef(new DOMMatrix().scale(window.devicePixelRatio))
 
-  const createConfetti = useCallback(({
-    count = 75,
-    duration = 0,
+  const createConfetti = useCallback(async ({
+    count = count,
+    duration = duration,
     sourceRef,
   } = {}) => {
     // Choose where the confetti will spawn
@@ -56,129 +64,118 @@ const useConfetti = ({
     particles.current = [
       ...particles.current,
       ...Array.from({length: count}, () => {
+        const [vxInitial, vyInitial] = initialVelocity
+        const [vxSpread, vySpread] = initialVelocitySpread
         const [x, y] = [left + Math.random() * width, top + Math.random() * height]
         const [cx, cy] = [left + width / 2, top + height / 2]
         const a = Math.atan2(y - cy, x - cx)
-        const vx = Math.cos(a) * Math.random() * xVelocityVariance + xVelocityBase
-        const vy = Math.sin(a) * Math.random() * yVelocityVariance + yVelocityBase
+        const vx = Math.cos(a) * Math.random() * vxSpread + vxInitial
+        const vy = Math.sin(a) * Math.random() * vySpread + vyInitial
         return {
           x, y,
           vx, vy,
-          delayUntil: lastFrameTime.current + (Math.random() * duration),
-          diameter: Math.random() * diameterVariance + diameterBase,
-          tilt: Math.random() * tiltVariance + tiltBase,
-          tiltAngleIncrement: Math.random() * tiltAngleIncrementVariance + tiltAngleIncrementBase,
-          tiltAngle: Math.random() * tiltAngleVariance + tiltAngleBase,
+          delayUntil: randBetween(lastFrameTime.current, lastFrameTime.current + duration),
+          diameter: randBetween(diameterMin, diameterMax),
           color: colors[(Math.random() * colors.length) | 0],
-          shape: chooseWeighted(shapeWeights, Math.random()),
+          shape: randWeighted(shapeWeights),
+          twirl: randBetween(twirlMin, twirlMax),
+          flip: randBetween(initialFlipMin, initialFlipMax),
+          flipIncrement: randBetween(flipIncrementMin, flipIncrementMax),
+          angle: randBetween(initialAngleMin, initialAngleMax),
+          angleIncrement: randBetween(angleIncrementMin, angleIncrementMax),
         }
       }),
     ]
   },
   [
-    xVelocityBase,
-    xVelocityVariance,
-    yVelocityBase,
-    yVelocityVariance,
-    diameterBase,
-    diameterVariance,
-    tiltBase,
-    tiltVariance,
-    tiltAngleBase,
-    tiltAngleVariance,
-    tiltAngleIncrementBase,
-    tiltAngleIncrementVariance,
-    shapeWeights,
+    count, duration, colors, shapeWeights,
+    initialVelocity, initialVelocitySpread,
+    diameterMin, diameterMax,
+    twirlMin, twirlMax,
+    initialFlipMin, initialFlipMax,
+    flipIncrementMin, flipIncrementMax,
+    initialAngleMin, initialAngleMax,
+    angleIncrementMin, angleIncrementMax,
   ])
 
-  const Confetti = ({ style = {}, ...props }) => {
-    const canvasRef = useRef()
-    const canvasBBoxRef = useRef()
-    const ctxRef = useRef()
+  const onCanvasResize = useCallback(() => {
+    if (canvasRef.current) {
+      // Get canvas bounding box
+      const canvasBBox = canvasRef.current.getBoundingClientRect()
+      const { width, height } = canvasBBox
+      canvasBBoxRef.current = canvasBBox
 
-    const onCanvasResize = useCallback(() => {
-      if (canvasRef.current) {
-        // Get canvas bounding box
-        const canvasBBox = canvasRef.current.getBoundingClientRect()
-        const { width, height } = canvasBBox
-        canvasBBoxRef.current = canvasBBox
+      // Set canvas size
+      const scale = window.devicePixelRatio
+      canvasRef.current.width = Math.floor(width * scale)
+      canvasRef.current.height = Math.floor(height * scale)
 
-        // Set canvas size
-        const scale = window.devicePixelRatio
-        canvasRef.current.width = Math.floor(width * scale)
-        canvasRef.current.height = Math.floor(height * scale)
-      }
-    }, [])
+      transformMatrix.current = new DOMMatrix().scale(scale)
+    }
+  }, [])
 
-    // Observe for canvas size changes
-    useEffect(() => {
-      if (canvasRef.current) {
-        const resizeObserver = new ResizeObserver(onCanvasResize)
-        resizeObserver.observe(canvasRef.current)
+  // Observe for canvas size changes
+  useEffect(() => {
+    if (canvasRef.current) {
+      // Get canvas context
+      ctxRef.current = canvasRef.current.getContext('2d')
 
-        return () => resizeObserver.disconnect()
-      }
-    }, [])
+      // Observe for canvas size changes
+      const resizeObserver = new ResizeObserver(onCanvasResize)
+      resizeObserver.observe(canvasRef.current)
 
-    // Apply context
-    useEffect(() => {
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d')
-        ctxRef.current = ctx
-      }
-    }, [])
+      return () => resizeObserver.disconnect()
+    }
+  }, [])
 
-    // Render onto canvas
-    useAnimationFrame(currentTime => {
-      lastFrameTime.current = currentTime
+  // Render onto canvas
+  useAnimationFrame(currentTime => {
+    lastFrameTime.current = currentTime
 
-      if (ctxRef.current && canvasBBoxRef.current) {
-        const ctx = ctxRef.current
-        const { top: canvasTop, left: canvasLeft } = canvasBBoxRef.current
-        const scale = window.devicePixelRatio
-        const { width, height } = canvasRef.current
+    if (ctxRef.current && canvasBBoxRef.current) {
+      const ctx = ctxRef.current
+      const { top: canvasTop, left: canvasLeft } = canvasBBoxRef.current
+      const { width, height } = canvasRef.current
 
-        // Update particles
-        particles.current = particles.current.map(p => {
-          // Still delayed?
-          if (currentTime < p.delayUntil) return p
+      // Update particles
+      particles.current = particles.current.map(p => {
+        // Still delayed?
+        if (currentTime < p.delayUntil) return p
 
-          const speed = simulationSpeed / 10
-          const g = gravity / 100
-          return {
-            ...p,
-            tiltAngle: p.tiltAngle + p.tiltAngleIncrement,
-            vy: p.vy + g * scale,
-            x: p.x + p.vx * p.diameter * scale * speed,
-            y: p.y + p.vy * p.diameter * scale * speed,
-            tilt: Math.sin(p.tiltAngle) * tiltAmount,
-          }
-        })
+        return {
+          ...p,
+          vy: p.vy + ((gravity/100) * speed),
+          vx: p.vx + (wind * speed),
+          x: p.x + (p.vx * speed),
+          y: p.y + (p.vy * speed),
+          flip: p.flip + (p.flipIncrement * (rotationAndVelocityLink ? Math.min(Math.max(p.vy, p.vx), 2) * rotationAndVelocityLink : 1) * speed),
+          angle: p.angle + (p.angleIncrement * speed),
+        }
+      })
 
-        // Remove off-screen particles
-        particles.current = particles.current.filter(p => {
-          if (currentTime < p.delayUntil) return true
-          if (p.x < -killDistance || p.x > width + killDistance) return false
-          if (p.y < -killDistance || p.y > height + killDistance) return false
-          return true
-        })
+      // Remove off-screen particles
+      particles.current = particles.current.filter(p => {
+        if (currentTime < p.delayUntil) return true
+        if (p.x < -killDistance || p.x > width + killDistance) return false
+        if (p.y < -killDistance || p.y > height + killDistance) return false
+        return true
+      })
 
-        // Render particles
-        ctx.clearRect(0, 0, width, height)
-        particles.current.forEach(p => {
-          // Still waiting for delay?
-          if (currentTime < p.delayUntil) return
+      // Render particles
+      ctx.clearRect(0, 0, width, height)
+      particles.current.forEach(p => {
+        // Still delayed?
+        if (currentTime < p.delayUntil) return
 
-          const [x, y] = [p.x - canvasLeft, p.y - canvasTop]
-          shapeDrawingFunctions[p.shape]({ p, x, y, ctx, scale })
-        })
-      }
-    })
+        const [x, y] = [p.x - canvasLeft, p.y - canvasTop]
+        ctx.setTransform(transformMatrix.current.translate(x, y).rotate(p.angle).scale(1, Math.sin(((p.flip+90)*(Math.PI/180)))))
+        shapeFunctions[p.shape]({ p, ctx })
+        ctx.setTransform(1,0,0,1,0,0)
+      })
+    }
+  })
 
-    return <canvas ref={canvasRef} style={{ ...canvasStyle, ...style }} {...props} />
-  }
-
-  return { Confetti, createConfetti }
+  return { createConfetti, canvasRef }
 }
 
 export default useConfetti
