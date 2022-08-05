@@ -133,16 +133,30 @@ const useConfetti = ({
     lastFrameTime.current = currentTime
 
     if (ctxRef.current && canvasBBoxRef.current) {
-      const ctx = ctxRef.current
-      const { top: canvasTop, left: canvasLeft } = canvasBBoxRef.current
       const { width, height } = canvasRef.current
 
-      // Update particles
-      particles.current = particles.current.map(p => {
-        // Still delayed?
-        if (currentTime < p.delayUntil) return p
+      // Clear canvas
+      ctxRef.current.clearRect(0, 0, width, height)
 
-        return {
+      // Update particles
+      particles.current = particles.current.reduce((all, p) => {
+        // Still delayed?
+        if (currentTime < p.delayUntil) return [...all, p]
+
+        // Remove off-screen particles
+        if (p.x < -killDistance/window.devicePixelRatio
+          || p.x > (width + killDistance)/window.devicePixelRatio
+          || p.y < -killDistance/window.devicePixelRatio
+          || p.y > (height + killDistance)/window.devicePixelRatio
+        ) return all
+
+        // Render particle
+        const [x, y] = [p.x - canvasBBoxRef.current.left, p.y - canvasBBoxRef.current.top]
+        ctxRef.current.setTransform(transformMatrix.current.translate(x, y).rotate(p.angle).scale(1, Math.sin(((p.flip+90)*(Math.PI/180)))))
+        shapeFunctions[p.shape]({ p, ctx: ctxRef.current })
+        ctxRef.current.setTransform(1,0,0,1,0,0)
+
+        return [...all, {
           ...p,
           vy: p.vy + ((gravity/100) * speed),
           vx: p.vx + (wind * speed),
@@ -150,28 +164,8 @@ const useConfetti = ({
           y: p.y + (p.vy * speed),
           flip: p.flip + (p.flipIncrement * (rotationAndVelocityLink ? Math.min(Math.max(p.vy, p.vx), 2) * rotationAndVelocityLink : 1) * speed),
           angle: p.angle + (p.angleIncrement * speed),
-        }
-      })
-
-      // Remove off-screen particles
-      particles.current = particles.current.filter(p => {
-        if (currentTime < p.delayUntil) return true
-        if (p.x < -killDistance || p.x > width + killDistance) return false
-        if (p.y < -killDistance || p.y > height + killDistance) return false
-        return true
-      })
-
-      // Render particles
-      ctx.clearRect(0, 0, width, height)
-      particles.current.forEach(p => {
-        // Still delayed?
-        if (currentTime < p.delayUntil) return
-
-        const [x, y] = [p.x - canvasLeft, p.y - canvasTop]
-        ctx.setTransform(transformMatrix.current.translate(x, y).rotate(p.angle).scale(1, Math.sin(((p.flip+90)*(Math.PI/180)))))
-        shapeFunctions[p.shape]({ p, ctx })
-        ctx.setTransform(1,0,0,1,0,0)
-      })
+        }]
+      }, [])
     }
   })
 
