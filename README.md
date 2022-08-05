@@ -3,7 +3,7 @@
 ![minzip size](https://img.shields.io/bundlephobia/minzip/@stevent-team/react-party)
 
 
-Discord-inspired canvas confetti effect for React.
+Discord-inspired canvas confetti effect for React. **[See a demo](https://stevent-team.github.io/react-party/)**.
 
 ![react-party-confetti](https://user-images.githubusercontent.com/8862273/182039150-b133b41c-ec3b-498c-947b-958f8a2601cf.png)
 
