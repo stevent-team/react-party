@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { useControls, folder } from 'leva'
+import { useControls, folder, button } from 'leva'
 import {
   useConfetti,
   Canvas,
@@ -29,11 +29,11 @@ const App = () => {
     twirl: { value: [0, .2], min: 0, max: 1 },
     angle: folder({
       initialAngle: { value: [0, 360], min: 0, max: 360 },
-      angleIncrement: { value: [-10, 10], min: -360, max: 360 },
+      angleIncrement: { value: [-10, 10], min: -50, max: 50 },
     }, { collapsed: true }),
     flip: folder({
       initialFlip: { value: [0, 360], min: 0, max: 360 },
-      flipIncrement: { value: [-10, 10], min: -360, max: 360 },
+      flipIncrement: { value: [-10, 10], min: -50, max: 50 },
     }, { collapsed: true }),
     rotationVelocityCoefficient: { value: .8, min: 0, max: 5 },
   }, { collapsed: true })
@@ -52,6 +52,10 @@ const App = () => {
     'hexagram': { value: 0, min: 0, max: 5, step: 1 },
     'image': { value: 0, min: 0, max: 5, step: 1 },
   }, { collapsed: true })
+
+  useControls({
+    'Visit the GitHub': button(() => window.open('https://github.com/stevent-team/react-party')),
+  })
 
   // Load custom image
   const imageRef = useRef()
