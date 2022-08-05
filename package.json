@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev:sample": "vite dev",
+    "dev": "vite dev",
     "build:sample": "vite build --config sample.vite.config.js"
   },
   "devDependencies": {
