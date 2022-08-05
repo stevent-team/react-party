@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react'
 import { useControls, folder, button } from 'leva'
 import {
   useConfetti,
-  Canvas,
   DEFAULT_SHAPE_FUNCTIONS,
   loadImage,
   drawImageParticle,
@@ -65,7 +64,7 @@ const App = () => {
   }, [])
 
   // Call hook
-  const { createConfetti, canvasRef } = useConfetti({
+  const { createConfetti, canvasProps } = useConfetti({
     ...global,
     ...confetti,
     shapeWeights,
@@ -77,7 +76,7 @@ const App = () => {
   })
 
   return <>
-    <Canvas ref={canvasRef} />
+    <canvas {...canvasProps} />
     <button onClick={() => createConfetti(launch)}>Party!</button>
   </>
 }

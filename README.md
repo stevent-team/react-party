@@ -15,16 +15,16 @@ yarn add @stevent-team/react-party
 
 ## Usage
 
-Use the built in `Canvas` component and pass the `canvasRef` returned from the hook into it.
+Spread the `canvasProps` returned from the hook into a html `canvas` element. This includes styles to position the canvas over the whole screen.
 
 ```jsx
-import { useConfetti, Canvas } from '@stevent-team/react-party'
+import { useConfetti } from '@stevent-team/react-party'
 
 const MyComponent = () => {
-  const { createConfetti, canvasRef } = useConfetti()
+  const { createConfetti, canvasProps } = useConfetti()
 
   return <>
-    <Canvas ref={canvasRef} />
+    <canvas {...canvasProps} />
     <button onClick={createConfetti}>Click Me!</button>
   </>
 }
@@ -34,13 +34,13 @@ const MyComponent = () => {
 
 ### Custom options
 
-Customise the behaviour of the confetti by passing options to `useConfetti`
+Customise the behaviour of the confetti by passing options to `useConfetti`.
 
 ```jsx
-import { useConfetti, Canvas } from '@stevent-team/react-party'
+import { useConfetti } from '@stevent-team/react-party'
 
 const MyComponent = () => {
-  const { createConfetti, canvasRef } = useConfetti({
+  const { createConfetti, canvasProps } = useConfetti({
     // Control the distribution of shapes
     shapeWeights: {
       triangle: 2,
@@ -65,7 +65,7 @@ const MyComponent = () => {
   })
 
   return <>
-    <Canvas ref={canvasRef} />
+    <canvas {...canvasProps} />
     <button onClick={createConfetti}>Click Me!</button>
   </>
 }
@@ -76,32 +76,32 @@ const MyComponent = () => {
 You can pass a `sourceRef` to `createConfetti()` to customise where the confetti appears from.
 
 ```jsx
-import { useConfetti, Canvas } from '@stevent-team/react-party'
+import { useConfetti } from '@stevent-team/react-party'
 
 const MyComponent = () => {
   const holeRef = useRef()
-  const { createConfetti, canvasRef } = useConfetti()
+  const { createConfetti, canvasProps } = useConfetti()
 
   return <>
-    <Canvas ref={canvasRef} />
+    <canvas {...canvasProps} />
     <AHoleInTheWall ref={holeRef}>
     <button onClick={() => createConfetti({ sourceRef: holeRef })}>Click Me!</button>
   </>
 }
 ```
 
-### Use your own canvas
+### Use custom canvas styles
 
-The `Canvas` component just wraps a html `canvas` with some simple styles to position the canvas absolutely on the page. Use your own canvas to apply custom styles.
+The `canvasProps` object contains `ref` and `style`. The ref is required to render confetti, but you can either use your own styles and just pass the ref, or override the styles like below:
 
 ```jsx
 import { useConfetti } from '@stevent-team/react-party'
 
 const MyComponent = () => {
-  const { createConfetti, canvasRef } = useConfetti()
+  const { createConfetti, canvasProps } = useConfetti()
 
   return <>
-    <canvas style={{ height: 200, width: 200 }} ref={canvasRef} />
+    <canvas {...canvasProps} style={{ ...canvasProps.style, backgroundColor: 'black' }} />
     <button onClick={createConfetti}>Click Me!</button>
   </>
 }
@@ -113,7 +113,7 @@ React Party supports custom particle drawing functions, including images.
 
 ```jsx
 import { useRef } from 'react'
-import { useConfetti, Canvas, loadImage, drawImageParticle } from '@stevent-team/react-party'
+import { useConfetti, loadImage, drawImageParticle } from '@stevent-team/react-party'
 
 const MyComponent = () => {
   // Use a react ref to store the image
@@ -123,29 +123,27 @@ const MyComponent = () => {
       .then(img => imageRef.current = img)
   }, [])
 
-  const { createConfetti, canvasRef } = useConfetti({
+  const { createConfetti, canvasProps } = useConfetti({
     // Set up a custom image particle
     shapeFunctions: {
       myCustomImage: drawImageParticle(imageRef.current),
     },
 
-    // Tell the library to use your custom particle function
+    // Tell the library to only use your custom particle function
     shapeWeights: {
       myCustomImage: 1,
     },
 
     // Stop the confetti from rotating or flipping
-    twirlMax: 0,
-    initialAngleMax: 0,
-    angleIncrementMin: 0,
-    angleIncrementMax: 0,
-    initialFlipMax: 0,
-    flipIncrementMin: 0,
-    flipIncrementMax: 0,
+    twirl: 0,
+    initialAngle: 0,
+    angleIncrement: 0,
+    initialFlip: 0,
+    flipIncrement: 0,
   })
 
   return <>
-    <Canvas ref={canvasRef} />
+    <canvas {...canvasProps} />
     <button onClick={createConfetti}>Click Me!</button>
   </>
 }
@@ -156,26 +154,26 @@ const MyComponent = () => {
 ### `useConfetti` options
 
 
-| Property                      | Type            | Default                                          | Description                                                                                                                                                                                 |
-|-------------------------------|-----------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `gravity`                     | Number          | `9.8`                                            | A number representing the gravity applied to each particle.                                                                                                                                 |
-| `wind`                        | Number          | `0`                                              | A number between `-1` and `1` that applies wind to each particle.                                                                                                                           |
-| `speed`                       | Number          | `1`                                              | The speed of the simulation.                                                                                                                                                                |
-| `killDistance`                | Number          | `100`                                            | The number of pixels past the edges of the canvas that particles will be deleted.                                                                                                           |
-| `count`                       | Number          | `75`                                             | The amount of particles that will be spawned on each call to `createConfetti`.                                                                                                              |
-| `duration`                    | Number          | `0`                                              | Distributes confetti over this many milliseconds on each call to `createConfetti`.                                                                                          |
-| `initialVelocity`             | Vector          | `[0, -3]`                                        | A vector representing the initial `x` and `y` velocity of each particle.                                                                                                                    |
-| `initialVelocitySpread`       | Vector          | `[5, 7]`                                         | A vector representing an `x` and `y` velocity spread that's applied to the `initialVelocity` values to randomise the spread of confetti.                                                    |
-| `diameter`                    | Tuple or number | `[10, 30]`                                       | Minimum and maximum values for the diameter of each particle in pixels. Set to a number to use the same value for every particle.                                                           |
-| `twirl`                       | Tuple or number | `[0, 0.2]`                                       | Minimum and maximum values for the twirl of each particle between 0 and 1. Offsets the centerpoint of each particle. Set to a number to use the same value for every particle.              |
-| `initialAngle`                | Tuple or number | `[0, 360]`                                       | Minimum and maximum values for the initial angle of each particle in degrees. Set to a number to use the same value for every particle.                                                     |
-| `angleIncrement`              | Tuple or number | `[-10, 10]`                                      | Minimum and maximum values for the angle increment every frame of each particle in degrees. Set to a number to use the same value for every particle.                                       |
-| `initialFlip`                 | Tuple or number | `[0, 360]`                                       | Minimum and maximum values for the initial flip of each particle in degrees. Set to a number to use the same value for every particle.                                                      |
-| `flipIncrement`               | Tuple or number | `[-10, 10]`                                      | Minimum and maximum values for the flip increment every frame of each particle in degrees. Set to a number to use the same value for every particle.                                        |
-| `rotationVelocityCoefficient` | Number          | `0.8`                                            | A number that is multiplied with the velocity of the particle to adjust the flip each frame. Essentially causes a particle to flip faster if its velocity is higher. Set to `0` to disable. |
-| `colors`                      | Array           | `DEFAULT_COLORS`                                 | An array of CSS colors.                                                                                                                                                                     |
-| `shapeFunctions`              | Object          | `DEFAULT_SHAPE_FUNCTIONS`                        | An object of functions for each shape that is used to draw them. See below for more details.                                                                                                |
-| `shapeWeights`                | Object          | `{ triangle: 1, circle: 1, star: 1, square: 1 }` | An object mapping shapes to their weights. A higher weight will cause that shape to appear more often. All keys in this array must also appear in `shapeFunctions` object.                  |
+| Property                      | Type                     | Default                                          | Description                                                                                                                                                                                 |
+|-------------------------------|--------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `gravity`                     | Number                   | `9.8`                                            | A number representing the gravity applied to each particle. Controls _vertical_ acceleration.                                                                                               |
+| `wind`                        | Number                   | `0`                                              | A number between `-1` and `1` that applies wind to each particle. Controls _horizontal_ acceleration.                                                                                       |
+| `speed`                       | Number                   | `1`                                              | The speed of the simulation.                                                                                                                                                                |
+| `killDistance`                | Number                   | `100`                                            | The number of pixels past the edges of the canvas that particles will be deleted.                                                                                                           |
+| `count`                       | Number                   | `75`                                             | The amount of particles that will be spawned on each call to `createConfetti`.                                                                                                              |
+| `duration`                    | Number                   | `0`                                              | Distributes confetti over this many milliseconds on each call to `createConfetti`.                                                                                                          |
+| `initialVelocity`             | Vector                   | `[0, -3]`                                        | A vector representing the initial `x` and `y` velocity of each particle.                                                                                                                    |
+| `initialVelocitySpread`       | Vector                   | `[5, 7]`                                         | A vector representing an `x` and `y` velocity spread that's applied to the `initialVelocity` values to randomise the spread of confetti.                                                    |
+| `diameter`                    | Range or number          | `[10, 30]`                                       | Minimum and maximum values for the diameter of each particle in pixels. Set to a number to use the same value for every particle.                                                           |
+| `twirl`                       | Range or number          | `[0, 0.2]`                                       | Minimum and maximum values for the twirl of each particle between 0 and 1. Offsets the centerpoint of each particle. Set to a number to use the same value for every particle.              |
+| `initialAngle`                | Range or number          | `[0, 360]`                                       | Minimum and maximum values for the initial angle of each particle in degrees. Set to a number to use the same value for every particle.                                                     |
+| `angleIncrement`              | Range or number          | `[-10, 10]`                                      | Minimum and maximum values for the angle increment every frame of each particle in degrees. Set to a number to use the same value for every particle.                                       |
+| `initialFlip`                 | Range or number          | `[0, 360]`                                       | Minimum and maximum values for the initial flip of each particle in degrees. Set to a number to use the same value for every particle.                                                      |
+| `flipIncrement`               | Range or number          | `[-10, 10]`                                      | Minimum and maximum values for the flip increment every frame of each particle in degrees. Set to a number to use the same value for every particle.                                        |
+| `rotationVelocityCoefficient` | Number                   | `0.8`                                            | A number that is multiplied with the velocity of the particle to adjust the flip each frame. Essentially causes a particle to flip faster if its velocity is higher. Set to `0` to disable. |
+| `colors`                      | String[]                 | `DEFAULT_COLORS`                                 | An array of CSS colors.                                                                                                                                                                     |
+| `shapeFunctions`              | Record<string, function> | `DEFAULT_SHAPE_FUNCTIONS`                        | An object of functions for each shape that is used to draw them. See below for more details.                                                                                                |
+| `shapeWeights`                | Record<string, number>   | `{ triangle: 1, circle: 1, star: 1, square: 1 }` | An object mapping shapes to their weights. A higher weight will cause that shape to appear more often. All keys in this array must also appear in `shapeFunctions` object.                  |
 
 ### `createConfetti` options
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react'
 
-import { DEFAULT_COLORS } from './config'
+import { DEFAULT_COLORS, CANVAS_STYLE } from './config'
 import { useAnimationFrame, randWeighted, randMinMax } from './util'
 import { DEFAULT_SHAPE_FUNCTIONS } from './util/drawing'
 
@@ -160,7 +160,13 @@ const useConfetti = ({
     }
   })
 
-  return { createConfetti, canvasRef }
+  return {
+    createConfetti,
+    canvasProps: {
+      ref: canvasRef,
+      style: CANVAS_STYLE,
+    },
+  }
 }
 
 export default useConfetti
