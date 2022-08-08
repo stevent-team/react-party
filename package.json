@@ -1,10 +1,12 @@
 {
   "name": "@stevent-team/react-party",
   "version": "0.1.1",
+  "description": "Canvas confetti effect for React 🎉",
+  "keywords": ["react", "canvas", "confetti", "party"],
+  "license": "MIT",
+  "repository": "github:stevent-team/react-party",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/react-party.umd.cjs",
   "module": "./dist/react-party.js",
   "exports": {
@@ -15,7 +17,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev:sample": "vite dev",
+    "dev": "vite dev",
     "build:sample": "vite build --config sample.vite.config.js"
   },
   "devDependencies": {

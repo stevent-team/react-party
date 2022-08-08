@@ -7,22 +7,22 @@ export default defineConfig({
   plugins: [react({ jsxRuntime: 'classic' })],
   resolve: {
     alias: {
-      '@stevent-team/react-party': resolve(__dirname, '/lib/main.js')
+      '@stevent-team/react-party': resolve(__dirname, '/lib/index.js')
     }
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'lib/main.js'),
+      entry: resolve(__dirname, 'lib/index.js'),
       name: 'react-party',
       fileName: 'react-party',
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
-          globals: {
-              react: 'React',
-              'react-dom': 'ReactDOM',
-          },
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+        },
       },
       input: {
         main: resolve(__dirname, 'sample/index.html'),
