@@ -43,7 +43,7 @@ const useConfetti = ({
   const canvasRef = useRef()
   const canvasBBoxRef = useRef()
   const ctxRef = useRef()
-  const transformMatrix = useRef(new DOMMatrix().scale(window.devicePixelRatio))
+  const transformMatrix = useRef(new DOMMatrixReadOnly().scale(window.devicePixelRatio))
 
   const createConfetti = useCallback(async ({
     count = count,
@@ -101,7 +101,7 @@ const useConfetti = ({
       canvasRef.current.width = Math.floor(width * scale)
       canvasRef.current.height = Math.floor(height * scale)
 
-      transformMatrix.current = new DOMMatrix().scale(scale)
+      transformMatrix.current = new DOMMatrixReadOnly().scale(scale)
     }
   }, [])
 
@@ -123,11 +123,13 @@ const useConfetti = ({
   useAnimationFrame(currentTime => {
     lastFrameTime.current = currentTime
 
-    if (ctxRef.current && canvasBBoxRef.current) {
+    const ctx = ctxRef.current
+
+    if (ctx && canvasBBoxRef.current) {
       const { width, height } = canvasRef.current
 
       // Clear canvas
-      ctxRef.current.clearRect(0, 0, width, height)
+      ctx.clearRect(0, 0, width, height)
 
       // Update particles
       particles.current = particles.current.reduce((all, p) => {
@@ -143,9 +145,18 @@ const useConfetti = ({
 
         // Render particle
         const [x, y] = [p.x - canvasBBoxRef.current.left, p.y - canvasBBoxRef.current.top]
-        ctxRef.current.setTransform(transformMatrix.current.translate(x, y).rotate(p.angle).scale(1, Math.sin(((p.flip+90)*(Math.PI/180)))))
-        shapeFunctions[p.shape]({ p, ctx: ctxRef.current })
-        ctxRef.current.setTransform(1,0,0,1,0,0)
+        ctx.setTransform(transformMatrix.current
+          .translate(x, y)
+          .rotate(p.angle)
+          .scale(1, Math.sin(((p.flip+90)*(Math.PI/180))))
+        )
+        shapeFunctions[p.shape]({ p, ctx })
+        ctx.setTransform(1,0,0,1,0,0)
+
+        // Compute flip increment
+        const flipIncrement = p.flipIncrement * (
+          rotationVelocityCoefficient ? Math.min(Math.max(p.vy, p.vx), 2) * rotationVelocityCoefficient : 1
+        )
 
         return [...all, {
           ...p,
@@ -153,7 +164,7 @@ const useConfetti = ({
           vx: p.vx + (wind * speed),
           x: p.x + (p.vx * speed),
           y: p.y + (p.vy * speed),
-          flip: p.flip + (p.flipIncrement * (rotationVelocityCoefficient ? Math.min(Math.max(p.vy, p.vx), 2) * rotationVelocityCoefficient : 1) * speed),
+          flip: p.flip + (flipIncrement * speed),
           angle: p.angle + (p.angleIncrement * speed),
         }]
       }, [])
