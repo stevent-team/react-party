@@ -34,13 +34,11 @@
     "leva": "^0.9.29",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^3.0.4"
+    "vite": "^3.0.4",
+    "react-router-dom": "^6.3.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "dependencies": {
-    "react-router-dom": "^6.3.0"
   }
 }
