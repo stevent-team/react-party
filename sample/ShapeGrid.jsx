@@ -126,7 +126,7 @@ const ShapeCell = ({
           .translate(width/2, height/2)
           .scale(window.devicePixelRatio)
           .rotate(angle)
-          .translate(twirl*diameter*window.devicePixelRatio, twirl*diameter*window.devicePixelRatio)
+          .translate(twirl*diameter, twirl*diameter)
           .scale(1, Math.sin(((flip+90)*(Math.PI/180))))
       )
       shapeFn({ ctx: ctxRef.current, p: {
