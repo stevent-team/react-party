@@ -54,8 +54,6 @@ const ShapeGrid = () => {
     verticalShiftPortion: { value: 0.25, min: 0, max: 1 },
     innerControlPortion: { value: 0.6, min: 0, max: 2 },
     outerControlPortion: { value: 1, min: 0, max: 2 },
-    // verticalPullInAmount: { value: .4, min: 0, max: 1 },
-    // verticalSquishAmount: { value: 2, min: 0, max: 1 },
     color: '#64c0de'
   })
 
