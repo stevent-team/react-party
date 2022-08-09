@@ -146,7 +146,7 @@ const useConfetti = ({
         // Render particle
         const [x, y] = [p.x - canvasBBoxRef.current.left, p.y - canvasBBoxRef.current.top]
         ctx.setTransform(transformMatrix.current
-          .translate(x, y)
+          .translate(x - p.twirl*p.diameter, y - p.twirl*p.diameter)
           .rotate(p.angle)
           .scale(1, Math.sin(((p.flip+90)*(Math.PI/180))))
         )

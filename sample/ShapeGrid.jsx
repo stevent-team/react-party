@@ -119,18 +119,20 @@ const ShapeCell = ({
       ctxRef.current.clearRect(0, 0, width, height)
 
       // Render particle
+      const diameter = Math.max(bb.width, bb.height) * diameterPortion
       ctxRef.current.setTransform(
         new DOMMatrixReadOnly()
+          .translate(-twirl*diameter*window.devicePixelRatio, -twirl*diameter*window.devicePixelRatio)
           .translate(width/2, height/2)
           .scale(window.devicePixelRatio)
           .rotate(angle)
+          .translate(twirl*diameter*window.devicePixelRatio, twirl*diameter*window.devicePixelRatio)
           .scale(1, Math.sin(((flip+90)*(Math.PI/180))))
       )
       shapeFn({ ctx: ctxRef.current, p: {
         flip,
         angle,
-        twirl,
-        diameter: Math.max(bb.width, bb.height) * diameterPortion,
+        diameter,
         color,
       }})
       ctxRef.current.setTransform(1,0,0,1,0,0)
