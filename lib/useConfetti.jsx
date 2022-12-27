@@ -149,6 +149,7 @@ const useConfetti = ({
           .translate(x, y)
           .rotate(p.angle)
           .scale(1, Math.sin(((p.flip+90)*(Math.PI/180))))
+          .translate(-p.twirl*p.diameter, -p.twirl*p.diameter)
         )
         shapeFunctions[p.shape]({ p, ctx })
         ctx.setTransform(1,0,0,1,0,0)
