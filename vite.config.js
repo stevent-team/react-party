@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [react({ jsxRuntime: 'classic' })],
+  plugins: [react()],
   resolve: {
     alias: {
       '@stevent-team/react-party': resolve(__dirname, '/lib/index.js')
@@ -23,9 +23,6 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
         },
-      },
-      input: {
-        main: resolve(__dirname, 'sample/index.html'),
       },
     }
   }
