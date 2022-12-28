@@ -2,17 +2,18 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), dts({ insertTypesEntry: true })],
   resolve: {
     alias: {
-      '@stevent-team/react-party': resolve(__dirname, '/lib/index.js')
+      '@stevent-team/react-party': resolve(__dirname, '/lib/index.ts')
     }
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'lib/index.js'),
+      entry: resolve(__dirname, 'lib/index.ts'),
       name: 'react-party',
       fileName: 'react-party',
     },
