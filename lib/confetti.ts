@@ -88,13 +88,39 @@ export const createRandomParticle = (
   options: ConfettiOptions
 ): Particle => {
   const { left, top, width, height } = source.getBoundingClientRect()
+  const [cx, cy] = [left + width / 2, top + height / 2]
   const [vxInitial, vyInitial] = options.initialVelocity
   const [vxSpread, vySpread] = options.initialVelocitySpread
-  const [x, y] = [left + Math.random() * width, top + Math.random() * height]
-  const [cx, cy] = [left + width / 2, top + height / 2]
+  
+  // Determine spawn location 
+  let [x, y] = [0, 0]
+  if (options.spawnLocation === 'distribute') {
+    [x, y] = [left + Math.random() * width, top + Math.random() * height]
+  } else if (options.spawnLocation === 'edges') {
+    [x, y] = [left + Math.random() * width, top + Math.random() * height]
+    if (Math.random() < .5) {
+      x = x < cx ? left : left + width
+    } else {
+      y = y < cy ? top : top + height
+    }
+  } else if (options.spawnLocation === 'corners') {
+    [x, y] = [left + Math.random() * width, top + Math.random() * height]
+    x = x < cx ? left : left + width
+    y = y < cy ? top : top + height
+  }
+
+  // Find dir to center
   const a = Math.atan2(y - cy, x - cx)
-  const vx = Math.cos(a) * Math.random() * vxSpread + vxInitial
-  const vy = Math.sin(a) * Math.random() * vySpread + vyInitial
+  const [dx, dy] = [Math.cos(a), Math.sin(a)]
+
+  // Apply spacing
+  x += dx * options.spawnGap
+  y += dy * options.spawnGap
+
+  // Determine initial movement
+  const vx = dx * Math.random() * vxSpread + vxInitial
+  const vy = dy * Math.random() * vySpread + vyInitial
+
   return {
     x, y,
     vx, vy,

@@ -15,6 +15,8 @@ const Confetti = () => {
   const launch = useControls('Creation options', {
     duration: { value: 0, min: 0, max: 5000 },
     count: { value: 75, min: 1, max: 2000, step: 1 },
+    spawnLocation: { value: 'distribute', options: ['distribute', 'edges', 'corners'] },
+    spawnGap: { value: 0, min: -50, max: 50 },
   })
 
   const global = useControls('Environment options', {
@@ -80,9 +82,23 @@ const Confetti = () => {
     }
   })
 
+  const buttonStyle = {
+    distribute: {},
+    edges: {
+      opacity: .2,
+      width: '50%',
+      paddingBlock: '10em',
+    },
+    corners: {
+      opacity: .2,
+      width: '50%',
+      paddingBlock: '10em',
+    }
+  }[launch.spawnLocation]
+
   return <>
     <canvas {...canvasProps} />
-    <button onClick={() => createConfetti(launch)}>Party!</button>
+    <button onClick={() => createConfetti(launch)} style={buttonStyle}>Party!</button>
   </>
 }
 
