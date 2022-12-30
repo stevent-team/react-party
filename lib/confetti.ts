@@ -50,10 +50,11 @@ export const updateParticle = (
   if (currentTime < p.delayUntil) return { particle: p, visible: false }
 
   // Remove off-screen particles
-  if (p.x < -options.killDistance/window.devicePixelRatio
-    || p.x > (width + options.killDistance)/window.devicePixelRatio
-    || p.y < -options.killDistance/window.devicePixelRatio
-    || p.y > (height + options.killDistance)/window.devicePixelRatio
+  const kd = options.killDistance/window.devicePixelRatio
+  if (p.x < -kd
+    || p.x > width + kd
+    || p.y < -kd
+    || p.y > height + kd
   ) return { particle: undefined, visible: false }
 
   // Compute flip increment
