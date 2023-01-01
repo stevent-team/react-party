@@ -1,4 +1,6 @@
-export const drawLineParticle = ({ ctx, p }) => {
+import type { DrawShapeArguments, ShapeDrawingFunction } from '../types'
+
+export const drawLineParticle = ({ ctx, p }: DrawShapeArguments) => {
   ctx.beginPath()
   ctx.lineCap = 'butt'
   ctx.lineWidth = p.diameter
@@ -8,7 +10,7 @@ export const drawLineParticle = ({ ctx, p }) => {
   ctx.stroke()
 }
 
-export const drawCircleParticle = ({ ctx, p }) => {
+export const drawCircleParticle = ({ ctx, p }: DrawShapeArguments) => {
   ctx.fillStyle = p.color
   ctx.beginPath()
   ctx.ellipse(
@@ -26,7 +28,7 @@ export const drawCrescentParticle = ({
   verticalShiftPortion = 0.25,
   innerControlPortion = .6,
   outerControlPortion = 1,
-}={}) => ({ ctx, p }) => {
+}={}) => ({ ctx, p }: DrawShapeArguments) => {
   const r = p.diameter/2
   const xShiftAmount = r * horizontalShiftPortion
   const innerControlRadius = r*innerControlPortion
@@ -51,7 +53,7 @@ export const drawCrescentParticle = ({
   ctx.fill()
 }
 
-export const drawImageParticle = image => ({ ctx, p }) => {
+export const drawImageParticle = (image: CanvasImageSource) => ({ ctx, p }: DrawShapeArguments) => {
   ctx.drawImage(
     image,
     -p.diameter/2, -p.diameter/2,
@@ -65,7 +67,7 @@ export const drawRegularPolygonParticle = ({
   spikedPortion = .5,
   fill = true,
   startAngle = Math.PI/4,
-} = {}) => ({ ctx, p }) => {
+} = {}) => ({ ctx, p }: DrawShapeArguments) => {
   // Determine change in angle
   const dTheta = (Math.PI*2) / numPoints
   const expand = 1
@@ -126,4 +128,4 @@ export const DEFAULT_SHAPE_FUNCTIONS = {
   diamond: drawRegularPolygonParticle({ numPoints: 4, spiked: true }),
   star: drawRegularPolygonParticle({ numPoints: 5, spiked: true }),
   hexagram: drawRegularPolygonParticle({ numPoints: 6, spiked: true }),
-}
+} as Record<string, ShapeDrawingFunction>
