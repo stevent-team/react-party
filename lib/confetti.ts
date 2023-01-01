@@ -95,7 +95,7 @@ export const createRandomParticle = (
   
   // Determine spawn location 
   let [x, y] = [0, 0]
-  if (options.spawnLocation === 'distribute') {
+  if (options.spawnLocation === 'area') {
     [x, y] = [left + Math.random() * width, top + Math.random() * height]
   } else if (options.spawnLocation === 'edges') {
     [x, y] = [left + Math.random() * width, top + Math.random() * height]

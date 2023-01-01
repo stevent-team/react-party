@@ -5,7 +5,7 @@ import { DEFAULT_SHAPE_FUNCTIONS } from './util/drawing'
 
 export type RangeArg = number | [number, number]
 export type VectorArg = [number, number]
-export type ConfettiSpawnLocation = 'distribute' | 'edges' | 'corners'
+export type ConfettiSpawnLocation = 'area' | 'edges' | 'corners'
 
 export interface CreateConfettiOptions {
   /** The amount of particles that will be spawned. Overrides the count property in the options passed to `useConfetti`. */
@@ -17,7 +17,7 @@ export interface CreateConfettiOptions {
   /** Pass in a ref to use as the source of the confetti. By default, `document.activeElement` will be used if this isn't set. */
   sourceRef?: MutableRefObject<HTMLElement>
 
-  /** Where the confetti should be spawned and how it is randomly distributed */
+  /** Where in the source element the confetti should be created. Defaults to `area`. */
   spawnLocation: ConfettiSpawnLocation,
 
   /** Spacing between the source element and the spawned confetti. Applied in direction away from the center of source element. */
@@ -76,7 +76,7 @@ export interface ConfettiOptions {
      * @note Can be overriden when calling createConfetti */
     duration: number,
 
-    /**  Where the confetti should be spawned and how it is randomly distributed 
+    /** Where in the source element the confetti should be created. Defaults to `area`.
      * @note Can be overriden when calling createConfetti */
     spawnLocation: ConfettiSpawnLocation,
 
@@ -123,6 +123,6 @@ export const DEFAULT_CONFETTI_OPTIONS: ConfettiOptions = {
   },
   count: 75,
   duration: 0,
-  spawnLocation: 'distribute',
+  spawnLocation: 'area',
   spawnGap: 0,
 }

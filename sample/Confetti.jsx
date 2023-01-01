@@ -15,7 +15,7 @@ const Confetti = () => {
   const launch = useControls('Creation options', {
     duration: { value: 0, min: 0, max: 5000 },
     count: { value: 75, min: 1, max: 2000, step: 1 },
-    spawnLocation: { value: 'distribute', options: ['distribute', 'edges', 'corners'] },
+    spawnLocation: { value: 'area', options: ['area', 'edges', 'corners'] },
     spawnGap: { value: 0, min: -50, max: 50 },
   })
 
@@ -42,7 +42,7 @@ const Confetti = () => {
     rotationVelocityCoefficient: { value: .8, min: 0, max: 5 },
   }, { collapsed: true })
 
-  const { 'Explore shape options': _btn, ...shapeWeights }= useControls('Shape weights', {
+  const { 'Explore shape options': _btn, ...shapeWeights } = useControls('Shape weights', {
     'Explore shape options': button(() => window.open('/shapes')),
     'moon': { value: 0, min: 0, max: 5, step: 1 },
     'line': { value: 0, min: 0, max: 5, step: 1 },
@@ -82,19 +82,11 @@ const Confetti = () => {
     }
   })
 
-  const buttonStyle = {
-    distribute: {},
-    edges: {
-      opacity: .2,
-      width: '50%',
-      paddingBlock: '10em',
-    },
-    corners: {
-      opacity: .2,
-      width: '50%',
-      paddingBlock: '10em',
-    }
-  }[launch.spawnLocation]
+  const buttonStyle = ['edges', 'corners'].includes(launch.spawnLocation) ? {
+    opacity: .2,
+    width: '50%',
+    paddingBlock: '10em',
+  } : {}
 
   return <>
     <canvas {...canvasProps} />
