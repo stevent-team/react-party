@@ -4,7 +4,6 @@ module.exports = {
     'browser': true,
     'es2021': true
   },
-  'unused-vars': 'warn',
   'extends': [
     'eslint:recommended',
     'plugin:react/recommended'

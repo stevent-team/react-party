@@ -45,9 +45,11 @@ const useConfetti = ({
   const ctxRef = useRef()
   const transformMatrix = useRef(new DOMMatrixReadOnly().scale(window.devicePixelRatio))
 
+  // Creating a scope for parameters so they are not self-shadowed
+  const _defs = { count, duration }
   const createConfetti = useCallback(async ({
-    count = count,
-    duration = duration,
+    count = _defs.count,
+    duration = _defs.duration,
     sourceRef,
   } = {}) => {
     // Choose where the confetti will spawn
