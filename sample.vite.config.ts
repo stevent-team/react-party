@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react({ jsxRuntime: 'classic' })],
   resolve: {
     alias: {
-      '@stevent-team/react-party': resolve(__dirname, '/lib/index.js')
+      '@stevent-team/react-party': resolve(__dirname, 'lib/index.ts')
     }
   },
 })
