@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react(), dts({ insertTypesEntry: true })],
   resolve: {
     alias: {
-      '@stevent-team/react-party': resolve(__dirname, '/lib/index.ts')
+      '@stevent-team/react-party': resolve(__dirname, 'lib/index.ts')
     }
   },
   build: {
