@@ -16,7 +16,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
   const canvasRef = useRef<HTMLCanvasElement>()
   const canvasBBoxRef = useRef<DOMRect>()
   const ctxRef = useRef<CanvasRenderingContext2D>()
-  const transformMatrix = useRef(new DOMMatrixReadOnly().scale(window.devicePixelRatio))
+  const transformMatrix = useRef<DOMMatrix>()
 
   // Creating a scope for parameters so they are not self-shadowed
   const createConfetti = useCallback(async (createConfettiOptions: Partial<CreateConfettiOptions> = {}) => {
@@ -87,7 +87,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
             ctx,
             particle,
             canvasBBoxRef.current!,
-            transformMatrix.current,
+            transformMatrix.current ?? new DOMMatrixReadOnly().scale(window.devicePixelRatio),
             options.shapeFunctions
           )
         }
