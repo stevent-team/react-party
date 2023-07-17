@@ -16,7 +16,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
   const canvasRef = useRef<HTMLCanvasElement>()
   const canvasBBoxRef = useRef<DOMRect>()
   const ctxRef = useRef<CanvasRenderingContext2D>()
-  const transformMatrix = useRef(new DOMMatrixReadOnly().scale(window.devicePixelRatio))
+  const transformMatrix = useRef<DOMMatrix>()
 
   // Creating a scope for parameters so they are not self-shadowed
   const createConfetti = useCallback(async (createConfettiOptions: Partial<CreateConfettiOptions> = {}) => {
@@ -45,7 +45,9 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
       canvasRef.current.width = Math.floor(width * scale)
       canvasRef.current.height = Math.floor(height * scale)
 
-      transformMatrix.current = new DOMMatrixReadOnly().scale(scale)
+      if (typeof window !== 'undefined') {
+        transformMatrix.current = new DOMMatrixReadOnly().scale(scale)
+      }
     }
   }, [])
 
@@ -56,6 +58,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
       ctxRef.current = canvasRef.current.getContext('2d')!
 
       // Observe for canvas size changes
+      onCanvasResize()
       const resizeObserver = new ResizeObserver(onCanvasResize)
       resizeObserver.observe(canvasRef.current)
 
@@ -82,7 +85,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
         if (!particle) return all
 
         // Render it
-        if (visible) {
+        if (visible && transformMatrix.current) {
           renderParticle(
             ctx,
             particle,
