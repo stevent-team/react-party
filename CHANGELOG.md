@@ -1,5 +1,14 @@
 # @stevent-team/react-party
 
+## 0.3.1
+
+### Patch Changes
+
+- 590b6e3: Update dependencies
+- 7f46497: Don't initialize DOMMatrix in ref
+
+  This would cause NextJS client components to try and call `new DOMMatrixReadOnly()` while statically rendering, which would error as DOMMatrix is not available in Node.
+
 ## 0.3.0
 
 ### Minor Changes
