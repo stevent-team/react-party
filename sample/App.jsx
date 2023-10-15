@@ -1,15 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 
 import Confetti from './Confetti'
 import ShapeGrid from './ShapeGrid'
 
 const App = () => {
-  return <BrowserRouter>
+  return <HashRouter>
     <Routes>
       <Route path='/' element={<Confetti />} />
       <Route path='/shapes' element={<ShapeGrid />} />
     </Routes>
-  </BrowserRouter>
+  </HashRouter>
 }
 
 export default App

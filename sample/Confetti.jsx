@@ -43,7 +43,7 @@ const Confetti = () => {
   }, { collapsed: true })
 
   const { 'Explore shape options': _btn, ...shapeWeights } = useControls('Shape weights', {
-    'Explore shape options': button(() => window.open('/shapes')),
+    'Explore shape options': button(() => window.open('#shapes')),
     'moon': { value: 0, min: 0, max: 5, step: 1 },
     'line': { value: 0, min: 0, max: 5, step: 1 },
     'circle': { value: 1, min: 0, max: 5, step: 1 },
