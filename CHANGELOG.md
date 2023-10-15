@@ -1,5 +1,11 @@
 # @stevent-team/react-party
 
+## 0.3.3
+
+### Patch Changes
+
+- 0c3a4d6: Fix canvas context not being initialised
+
 ## 0.3.2
 
 ### Patch Changes
