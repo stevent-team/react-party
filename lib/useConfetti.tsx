@@ -65,7 +65,7 @@ const useConfetti = (confettiOptions: Partial<ConfettiOptions> = {}) => {
       return () => resizeObserver.disconnect()
     }
     return undefined
-  }, [])
+  }, [canvasRef.current])
 
   // Render onto canvas
   useAnimationFrame(currentTime => {
