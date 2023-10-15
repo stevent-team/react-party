@@ -1,5 +1,11 @@
 # @stevent-team/react-party
 
+## 0.3.2
+
+### Patch Changes
+
+- 636a9bd: Update dependencies
+
 ## 0.3.1
 
 ### Patch Changes
